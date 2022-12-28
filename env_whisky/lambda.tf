@@ -1,5 +1,4 @@
-
-resource "aws_lambda_function" "myLambda" {
+resource "aws_lambda_function" "demo_dynatrace_lambda" {
   function_name = "demo-dt-func-${var.env_codename}"
 
 
@@ -54,8 +53,6 @@ resource "aws_api_gateway_rest_api" "apiLambda" {
   name = "dt-demo-tf-${var.env_codename}"
 }
 
-
-
 resource "aws_api_gateway_resource" "proxy" {
   rest_api_id = aws_api_gateway_rest_api.apiLambda.id
   parent_id   = aws_api_gateway_rest_api.apiLambda.root_resource_id
@@ -79,7 +76,6 @@ resource "aws_api_gateway_integration" "lambda" {
   uri                     = aws_lambda_function.myLambda.invoke_arn
 }
 
-
 resource "aws_api_gateway_method" "proxy_root" {
   rest_api_id   = aws_api_gateway_rest_api.apiLambda.id
   resource_id   = aws_api_gateway_rest_api.apiLambda.root_resource_id
@@ -97,7 +93,6 @@ resource "aws_api_gateway_integration" "lambda_root" {
   uri                     = aws_lambda_function.myLambda.invoke_arn
 }
 
-
 resource "aws_api_gateway_deployment" "apideploy" {
   depends_on = [
     aws_api_gateway_integration.lambda,
@@ -107,7 +102,6 @@ resource "aws_api_gateway_deployment" "apideploy" {
   rest_api_id = aws_api_gateway_rest_api.apiLambda.id
   stage_name  = "test"
 }
-
 
 resource "aws_lambda_permission" "apigw" {
   statement_id  = "AllowAPIGatewayInvoke"
@@ -119,7 +113,6 @@ resource "aws_lambda_permission" "apigw" {
   # within the API Gateway REST API.
   source_arn = "${aws_api_gateway_rest_api.apiLambda.execution_arn}/*/*"
 }
-
 
 output "base_url" {
   value = aws_api_gateway_deployment.apideploy.invoke_url

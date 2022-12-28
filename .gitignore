@@ -33,3 +33,5 @@ override.tf.json
 .terraformrc
 terraform.rc
 *.sh
+.DS_Store
+venv/
